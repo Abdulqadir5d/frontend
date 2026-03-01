@@ -119,4 +119,32 @@ export const aiApi = {
     api.post(`/ai/explain-prescription?urdu=${urdu ? "true" : "false"}`, data).then((r) => r.data),
   flagRisks: (patientId: string) => api.get(`/ai/risk-flag/${patientId}`).then((r) => r.data),
   analyticsSummary: () => api.get("/ai/analytics-summary").then((r) => r.data),
+  checkInteractions: (medicines: string[]) => api.post("/ai/interactions", { medicines }).then((r) => r.data),
+  interpretLab: (reportData: unknown) => api.post("/ai/interpret-lab", { reportData }).then((r) => r.data),
 };
+
+// Billing
+export const billingApi = {
+  listInvoices: () => api.get("/billing").then((r) => r.data),
+  createInvoice: (data: unknown) => api.post("/billing", data).then((r) => r.data),
+};
+
+// Clinic (Admin)
+export const managedClinicApi = {
+  getSettings: () => api.get("/clinics/settings").then((r) => r.data),
+  updateSettings: (data: { name?: string; settings?: { logoUrl?: string; address?: string; contactNumber?: string } }) =>
+    api.patch("/clinics/settings", data).then((r) => r.data),
+};
+
+// EMR Templates
+export const emrApi = {
+  list: () => api.get("/emr-templates").then((r) => r.data),
+  create: (data: unknown) => api.post("/emr-templates", data).then((r) => r.data),
+  delete: (id: string) => api.delete(`/emr-templates/${id}`).then((r) => r.data),
+};
+
+// Search
+export const searchApi = {
+  global: (query: string) => api.get("/search", { params: { query } }).then((r) => r.data),
+};
+

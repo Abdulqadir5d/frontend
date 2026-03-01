@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { useClinic } from "@/context/ClinicContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const { clinic, loading: clinicLoading } = useClinic();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,7 +37,18 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
-        <h1 className="text-center text-3xl font-bold">Login</h1>
+        <div className="flex flex-col items-center gap-4">
+          {clinic?.settings.logoUrl ? (
+            <img src={clinic.settings.logoUrl} alt={clinic.name} className="h-16 w-auto" />
+          ) : (
+            <div className="h-16 w-16 rounded-full bg-blue-600 flex items-center justify-center text-white text-2xl font-bold">
+              {clinic?.name?.[0] || "AI"}
+            </div>
+          )}
+          <h1 className="text-center text-3xl font-bold">
+            {clinic?.name ? `Login to ${clinic.name}` : "Login"}
+          </h1>
+        </div>
         {error && (
           <p className="rounded bg-red-100 p-3 text-center text-red-700 dark:bg-red-900/30 dark:text-red-400">
             {error}

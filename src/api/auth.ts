@@ -27,6 +27,9 @@ export const authApi = {
   register: (data: { name: string; email: string; password: string; role?: string }) =>
     api.post<AuthResponse>("/auth/register", data).then((r) => r.data),
 
+  registerClinic: (data: { clinicName: string; subdomain: string; adminName: string; adminEmail: string; password: string }) =>
+    api.post<AuthResponse>("/clinics/register", data).then((r) => r.data),
+
   logout: () => api.post("/auth/logout").then((r) => r.data),
 
   me: () => api.get<MeResponse>("/auth/me").then((r) => r.data),
