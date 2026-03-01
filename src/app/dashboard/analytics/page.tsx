@@ -92,11 +92,10 @@ export default function AnalyticsPage() {
             {growthData.map((d, i) => (
               <div key={i} className="flex-1 flex flex-col items-center group">
                 <div
-                  className="w-full bg-slate-100 dark:bg-slate-800 rounded-t-lg relative overflow-hidden transition-all duration-500 group-hover:bg-teal-500/20"
-                  style={{ height: `${(d.patients / maxGrowthValue) * 100}%` }}
+                  className="w-full bg-teal-500/90 dark:bg-teal-600/90 rounded-t-lg relative overflow-hidden transition-all duration-500 hover:scale-x-105 hover:bg-teal-400 group-hover:shadow-[0_0_15px_rgba(20,184,166,0.3)]"
+                  style={{ height: `${Math.max((d.patients / maxGrowthValue) * 100, 5)}%` }}
                 >
-                  <div className="absolute inset-x-0 bottom-0 bg-teal-500 h-1 transition-all group-hover:h-full group-hover:opacity-10" />
-                  <div className="absolute top-2 left-1/2 -translate-x-1/2 text-[10px] font-bold text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute top-2 left-1/2 -translate-x-1/2 text-[10px] font-black text-white drop-shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
                     {d.patients}
                   </div>
                 </div>
@@ -129,8 +128,14 @@ export default function AnalyticsPage() {
                 </div>
               ))
             ) : (
-              <div className="flex h-32 items-center justify-center text-slate-400 italic text-sm border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-xl">
-                No diagnostic history available
+              <div className="flex flex-col gap-2 h-40 items-center justify-center text-slate-400 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-900/10 transition-colors hover:border-teal-200">
+                <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-1">
+                  <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+                <p className="text-sm font-bold uppercase tracking-tighter opacity-70 text-slate-600 dark:text-slate-300">Trend Data Pending</p>
+                <p className="text-[10px] text-center px-6 leading-relaxed opacity-60">Start issuing prescriptions with diagnoses to visualize real-time healthcare trends and prevalence data.</p>
               </div>
             )}
           </div>
