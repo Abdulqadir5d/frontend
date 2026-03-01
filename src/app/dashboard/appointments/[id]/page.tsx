@@ -60,9 +60,9 @@ export default function AppointmentDetailPage() {
           <div><dt className="text-sm text-slate-500">Date</dt><dd>{new Date(appointment.date).toLocaleDateString()}</dd></div>
           <div><dt className="text-sm text-slate-500">Time</dt><dd>{appointment.timeSlot}</dd></div>
           <div><dt className="text-sm text-slate-500">Status</dt><dd><span className={`rounded px-2 py-0.5 text-sm capitalize ${appointment.status === "completed" ? "bg-green-100 text-green-800" :
-              appointment.status === "cancelled" ? "bg-red-100 text-red-800" :
-                appointment.status === "confirmed" ? "bg-blue-100 text-blue-800" :
-                  "bg-amber-100 text-amber-800"
+            appointment.status === "cancelled" ? "bg-red-100 text-red-800" :
+              appointment.status === "confirmed" ? "bg-blue-100 text-blue-800" :
+                "bg-amber-100 text-amber-800"
             }`}>{appointment.status}</span></dd></div>
           {appointment.reason && <div><dt className="text-sm text-slate-500">Reason</dt><dd>{appointment.reason}</dd></div>}
         </dl>
@@ -71,7 +71,7 @@ export default function AppointmentDetailPage() {
           <div className="mt-6 flex items-center gap-2">
             <select
               value={status}
-              onChange={(e) => setStatus(e.target.value)}
+              onChange={(e) => setStatus(e.target.value as Appointment["status"] | "")}
               className="rounded border border-slate-300 px-3 py-1.5 text-sm dark:border-slate-600 dark:bg-slate-800"
             >
               <option value="">Update status...</option>
