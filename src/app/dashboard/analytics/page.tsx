@@ -34,7 +34,8 @@ export default function AnalyticsPage() {
     enabled: isAdmin || isDoctor,
   });
 
-  const topDiagnoses = isAdmin ? adminData?.topDiagnoses : [];
+  // Data for diagnoses, either from admin or clinic-wide for doctors
+  const topDiagnoses = isAdmin ? adminData?.topDiagnoses : (doctorData?.topDiagnoses || []);
 
   // Data for patient growth visualization
   const growthData = useMemo(() => [
@@ -46,7 +47,7 @@ export default function AnalyticsPage() {
   ], []);
 
   const maxGrowthValue = 250;
-  const maxDiagnosisCount = Math.max(...(topDiagnoses?.map((d: any) => d.count) || [10]));
+  const maxDiagnosisCount = Math.max(...(topDiagnoses?.map((d: any) => d.count) || []), 10);
 
   return (
     <div className="space-y-8">
