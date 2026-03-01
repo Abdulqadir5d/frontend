@@ -33,7 +33,7 @@ export function useRegister() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: { name: string; email: string; password: string; role?: string }) =>
+    mutationFn: (data: { name: string; email: string; password: string; role?: string; clinicId?: string }) =>
       authApi.register(data),
     onSuccess: (data) => {
       localStorage.setItem("accessToken", data.accessToken);

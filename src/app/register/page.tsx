@@ -6,10 +6,12 @@ import { useRegisterClinic } from "@/api/queries";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
+import { useClinic } from "@/context/ClinicContext";
 
 export default function RegisterPage() {
   const { register } = useAuth();
   const registerClinic = useRegisterClinic();
+  const { clinic } = useClinic();
   const router = useRouter();
 
   const [mode, setMode] = useState<"user" | "clinic">("user");
@@ -46,7 +48,13 @@ export default function RegisterPage() {
           password,
         });
       } else {
-        await register({ name, email, password, role });
+        await register({
+          name,
+          email,
+          password,
+          role,
+          clinicId: clinic?._id
+        });
       }
       router.push("/dashboard");
     } catch (err) {

@@ -8,7 +8,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (data: { name: string; email: string; password: string; role?: string }) => Promise<void>;
+  register: (data: { name: string; email: string; password: string; role?: string; clinicId?: string }) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await loginMutation.mutateAsync({ email, password });
   };
 
-  const register = async (data: { name: string; email: string; password: string; role?: string }) => {
+  const register = async (data: { name: string; email: string; password: string; role?: string; clinicId?: string }) => {
     await registerMutation.mutateAsync(data);
   };
 
