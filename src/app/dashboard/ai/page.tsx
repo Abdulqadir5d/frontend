@@ -20,6 +20,11 @@ export default function AIPage() {
   const [labData, setLabData] = useState("");
   const [labResult, setLabResult] = useState<any>(null);
 
+  const symptomMutation = useMutation({
+    mutationFn: (data: any) => aiApi.checkSymptoms(data),
+    onSuccess: (data) => setResult(data),
+  });
+
   const labMutation = useMutation({
     mutationFn: (data: string) => aiApi.interpretLab(data),
     onSuccess: (data) => setLabResult(data),
@@ -106,6 +111,9 @@ export default function AIPage() {
               <label className="mb-1 block text-sm font-medium">Medical history</label>
               <textarea value={history} onChange={(e) => setHistory(e.target.value)} className="input-field min-h-[80px]" placeholder="Any relevant history..." />
             </div>
+            <button type="submit" disabled={symptomMutation.isPending} className="btn-primary">
+              {symptomMutation.isPending ? "Analyzing..." : "Check Symptoms"}
+            </button>
           </form>
 
           {result && (() => {
