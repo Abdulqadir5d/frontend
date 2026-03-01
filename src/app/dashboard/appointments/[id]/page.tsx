@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { appointmentApi } from "@/api/clinic";
+import { appointmentApi, Appointment } from "@/api/clinic";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { useState } from "react";
@@ -12,7 +12,7 @@ export default function AppointmentDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState<Appointment["status"] | "">("");
 
   const { data: appointment, isLoading } = useQuery({
     queryKey: ["appointment", id],
@@ -21,7 +21,7 @@ export default function AppointmentDetailPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data: { status: string }) => appointmentApi.update(id!, data),
+    mutationFn: (data: { status: Appointment["status"] }) => appointmentApi.update(id!, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["appointment", id] });
       setStatus("");
@@ -59,12 +59,11 @@ export default function AppointmentDetailPage() {
           <div><dt className="text-sm text-slate-500">Doctor</dt><dd>{doctor?.name ?? "—"}</dd></div>
           <div><dt className="text-sm text-slate-500">Date</dt><dd>{new Date(appointment.date).toLocaleDateString()}</dd></div>
           <div><dt className="text-sm text-slate-500">Time</dt><dd>{appointment.timeSlot}</dd></div>
-          <div><dt className="text-sm text-slate-500">Status</dt><dd><span className={`rounded px-2 py-0.5 text-sm capitalize ${
-            appointment.status === "completed" ? "bg-green-100 text-green-800" :
-            appointment.status === "cancelled" ? "bg-red-100 text-red-800" :
-            appointment.status === "confirmed" ? "bg-blue-100 text-blue-800" :
-            "bg-amber-100 text-amber-800"
-          }`}>{appointment.status}</span></dd></div>
+          <div><dt className="text-sm text-slate-500">Status</dt><dd><span className={`rounded px-2 py-0.5 text-sm capitalize ${appointment.status === "completed" ? "bg-green-100 text-green-800" :
+              appointment.status === "cancelled" ? "bg-red-100 text-red-800" :
+                appointment.status === "confirmed" ? "bg-blue-100 text-blue-800" :
+                  "bg-amber-100 text-amber-800"
+            }`}>{appointment.status}</span></dd></div>
           {appointment.reason && <div><dt className="text-sm text-slate-500">Reason</dt><dd>{appointment.reason}</dd></div>}
         </dl>
 
