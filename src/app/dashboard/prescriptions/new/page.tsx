@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { prescriptionApi, patientApi } from "@/api/clinic";
+import { prescriptionApi, patientApi, doctorApi } from "@/api/clinic";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import axios from "axios";
@@ -11,19 +11,27 @@ import axios from "axios";
 export default function NewPrescriptionPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { user } = useAuth();
+
   const patientIdParam = searchParams.get("patientId");
+  const isAdmin = user?.role === "admin";
+  const isDoctor = user?.role === "doctor";
 
   const [patientId, setPatientId] = useState(patientIdParam || "");
+  const [doctorId, setDoctorId] = useState(isDoctor ? (user?.id ?? "") : "");
   const [diagnosis, setDiagnosis] = useState("");
   const [medicines, setMedicines] = useState([{ name: "", dosage: "", frequency: "", duration: "" }]);
   const [instructions, setInstructions] = useState("");
 
-  const { user } = useAuth();
-  const doctorId = user?.id ?? "";
-
-  const { data: patientsData } = useQuery({
+  const { data: patientsData, isLoading: patientsLoading } = useQuery({
     queryKey: ["patients-list"],
     queryFn: () => patientApi.list({ limit: 100 }),
+  });
+
+  const { data: doctorsData, isLoading: doctorsLoading } = useQuery({
+    queryKey: ["doctors"],
+    queryFn: doctorApi.list,
+    enabled: isAdmin,
   });
 
   const createMutation = useMutation({
@@ -86,13 +94,44 @@ export default function NewPrescriptionPage() {
       <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-4 rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800/50">
         <div>
           <label className="mb-1 block text-sm font-medium">Patient *</label>
-          <select required value={patientId} onChange={(e) => setPatientId(e.target.value)} className="input-field">
-            <option value="">Select patient</option>
+          <select
+            required
+            value={patientId}
+            onChange={(e) => setPatientId(e.target.value)}
+            className="input-field"
+            disabled={patientsLoading}
+          >
+            <option value="">{patientsLoading ? "Loading patients..." : "Select patient"}</option>
             {patients.map((p) => (
-              <option key={p._id} value={p._id}>{p.name}</option>
+              <option key={p._id} value={p._id}>{p.name} {p.contact !== "n/a" ? `– ${p.contact}` : ""}</option>
             ))}
+            {!patientsLoading && patients.length === 0 && (
+              <option value="" disabled>No patients found</option>
+            )}
           </select>
         </div>
+
+        {isAdmin && (
+          <div>
+            <label className="mb-1 block text-sm font-medium">Doctor *</label>
+            <select
+              required
+              value={doctorId}
+              onChange={(e) => setDoctorId(e.target.value)}
+              className="input-field"
+              disabled={doctorsLoading}
+            >
+              <option value="">{doctorsLoading ? "Loading doctors..." : "Select doctor"}</option>
+              {(doctorsData?.doctors || []).map((d) => (
+                <option key={d.id} value={d.id}>{d.name}</option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {isDoctor && (
+          <p className="text-xs text-slate-500 italic">Prescribing as: {user?.name}</p>
+        )}
         <div>
           <label className="mb-1 block text-sm font-medium">Diagnosis</label>
           <input type="text" value={diagnosis} onChange={(e) => setDiagnosis(e.target.value)} className="input-field" />

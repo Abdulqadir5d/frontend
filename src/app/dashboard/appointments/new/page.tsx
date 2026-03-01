@@ -23,14 +23,21 @@ export default function NewAppointmentPage() {
   const [timeSlot, setTimeSlot] = useState("");
   const [reason, setReason] = useState("");
 
-  const { data: patientsData } = useQuery({
+  const { data: patientsData, isLoading: patientsLoading } = useQuery({
     queryKey: ["patients-list"],
     queryFn: () => patientApi.list({ limit: 100 }),
   });
-  const { data: doctorsData } = useQuery({
+  const { data: doctorsData, isLoading: doctorsLoading } = useQuery({
     queryKey: ["doctors"],
     queryFn: doctorApi.list,
   });
+
+  useEffect(() => {
+    if (doctorsData?.doctors && isPatient === false && user?.role === "doctor" && !doctorId) {
+      const exists = doctorsData.doctors.find(d => d.id === user.id);
+      if (exists) setDoctorId(user.id);
+    }
+  }, [doctorsData, isPatient, user, doctorId]);
 
   const createMutation = useMutation({
     mutationFn: appointmentApi.create,
@@ -86,11 +93,20 @@ export default function NewAppointmentPage() {
         {!isPatient && (
           <div>
             <label className="mb-1 block text-sm font-medium">Patient *</label>
-            <select required value={patientId} onChange={(e) => setPatientId(e.target.value)} className="input-field">
-              <option value="">Select patient</option>
+            <select
+              required
+              value={patientId}
+              onChange={(e) => setPatientId(e.target.value)}
+              className="input-field"
+              disabled={patientsLoading}
+            >
+              <option value="">{patientsLoading ? "Loading patients..." : "Select patient"}</option>
               {patients.map((p) => (
-                <option key={p._id} value={p._id}>{p.name} – {p.contact}</option>
+                <option key={p._id} value={p._id}>{p.name} {p.contact !== "n/a" ? `– ${p.contact}` : ""}</option>
               ))}
+              {!patientsLoading && patients.length === 0 && (
+                <option value="" disabled>No patients found</option>
+              )}
             </select>
           </div>
         )}
@@ -101,8 +117,14 @@ export default function NewAppointmentPage() {
         )}
         <div>
           <label className="mb-1 block text-sm font-medium">Doctor *</label>
-          <select required value={doctorId} onChange={(e) => setDoctorId(e.target.value)} className="input-field">
-            <option value="">Select doctor</option>
+          <select
+            required
+            value={doctorId}
+            onChange={(e) => setDoctorId(e.target.value)}
+            className="input-field"
+            disabled={doctorsLoading}
+          >
+            <option value="">{doctorsLoading ? "Loading doctors..." : "Select doctor"}</option>
             {doctors.map((d) => (
               <option key={d.id} value={d.id}>{d.name}</option>
             ))}
