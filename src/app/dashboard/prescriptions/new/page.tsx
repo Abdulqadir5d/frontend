@@ -51,11 +51,20 @@ export default function NewPrescriptionPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const meds = medicines.filter((m) => m.name.trim() && m.dosage.trim());
-    if (!patientId || !doctorId || meds.length === 0) {
-      alert("Patient, doctor and at least one medicine required");
+    if (!patientId) {
+      alert("Please select a patient");
       return;
     }
+    const meds = medicines.filter((m) => m.name.trim() && m.dosage.trim());
+    if (meds.length === 0) {
+      alert("At least one medicine with name and dosage is required");
+      return;
+    }
+    if (!doctorId) {
+      alert("Doctor information is missing. Please re-login.");
+      return;
+    }
+
     createMutation.mutate({
       patientId,
       doctorId,

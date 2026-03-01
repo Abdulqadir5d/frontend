@@ -48,12 +48,27 @@ export default function NewAppointmentPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!doctorId || !date || !timeSlot) {
-      alert("Please fill required fields");
+    if (!doctorId) {
+      alert("Please select a doctor");
       return;
     }
+    if (!date) {
+      alert("Please select a date");
+      return;
+    }
+    if (!timeSlot) {
+      alert("Please select a time slot");
+      return;
+    }
+    if (!isPatient && !patientId) {
+      alert("Please select a patient");
+      return;
+    }
+
     const payload = { doctorId, date, timeSlot, reason };
-    if (!isPatient) (payload as Record<string, string>).patientId = patientId;
+    if (!isPatient) {
+      (payload as Record<string, string>).patientId = patientId;
+    }
     createMutation.mutate(payload as Parameters<typeof appointmentApi.create>[0]);
   };
 
