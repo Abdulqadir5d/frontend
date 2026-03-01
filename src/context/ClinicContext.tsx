@@ -35,9 +35,13 @@ export function ClinicProvider({ children }: { children: ReactNode }) {
                 const hostname = window.location.hostname;
                 const parts = hostname.split(".");
 
-                // Handle local dev (clinic.localhost) and production
+                // Improved subdomain extraction
                 let subdomain = "";
-                if (parts.length >= 2) {
+
+                // If we are on a known deployment platform domain, don't treat it as a clinic subdomain
+                const isSystemDomain = hostname.endsWith(".vercel.app") || hostname.endsWith(".onrender.com");
+
+                if (!isSystemDomain && parts.length >= 2) {
                     subdomain = parts[0];
                 }
 
