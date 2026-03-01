@@ -107,8 +107,15 @@ export const analyticsApi = {
 };
 
 // History
+export interface TimelineItem {
+  type: string;
+  date: string;
+  id: string;
+  data: unknown;
+}
+
 export const historyApi = {
-  patient: (patientId: string) => api.get<{ patient: Patient; timeline: unknown[] }>(`/history/patient/${patientId}`).then((r) => r.data),
+  patient: (patientId: string) => api.get<{ patient: Patient; timeline: TimelineItem[] }>(`/history/patient/${patientId}`).then((r) => r.data),
 };
 
 // AI

@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { patientApi, historyApi } from "@/api/clinic";
+import { patientApi, historyApi, TimelineItem } from "@/api/clinic";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 
@@ -85,7 +85,7 @@ export default function PatientDetailPage() {
       <div>
         <h2 className="mb-4 text-lg font-semibold text-slate-800 dark:text-slate-100">Medical History</h2>
         <div className="space-y-4">
-          {timeline.map((item: { type: string; date: string; id: string; data: unknown }) => (
+          {timeline.map((item: TimelineItem) => (
             <div
               key={item.id}
               className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800/50"
