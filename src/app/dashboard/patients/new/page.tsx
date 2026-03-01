@@ -1,0 +1,135 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import { patientApi } from "@/api/clinic";
+import Link from "next/link";
+import axios from "axios";
+
+export default function NewPatientPage() {
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState<"male" | "female" | "other">("male");
+  const [contact, setContact] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [error, setError] = useState("");
+
+  const createMutation = useMutation({
+    mutationFn: patientApi.create,
+    onSuccess: (p) => {
+      router.push(`/dashboard/patients/${p._id}`);
+    },
+    onError: (err) => {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || "Failed to create patient");
+      }
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    const ageNum = parseInt(age, 10);
+    if (!name?.trim() || !contact?.trim()) {
+      setError("Name and contact are required");
+      return;
+    }
+    if (isNaN(ageNum) || ageNum < 0 || ageNum > 150) {
+      setError("Age must be between 0 and 150");
+      return;
+    }
+    createMutation.mutate({
+      name,
+      age: ageNum,
+      gender,
+      contact,
+      email: email || undefined,
+      address: address || undefined,
+    });
+  };
+
+  return (
+    <div>
+      <div className="mb-6 flex items-center gap-4">
+        <Link href="/dashboard/patients" className="text-teal-600 hover:underline dark:text-teal-400">
+          ← Back
+        </Link>
+        <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Add Patient</h1>
+      </div>
+
+      <form onSubmit={handleSubmit} className="mx-auto max-w-lg space-y-4 rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800/50">
+        {error && (
+          <p className="rounded bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400">
+            {error}
+          </p>
+        )}
+        <div>
+          <label className="mb-1 block text-sm font-medium">Name *</label>
+          <input
+            type="text"
+            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="input-field"
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="mb-1 block text-sm font-medium">Age *</label>
+            <input
+              type="number"
+              required
+              min={0}
+              max={150}
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+              className="input-field"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium">Gender *</label>
+            <select value={gender} onChange={(e) => setGender(e.target.value as typeof gender)} className="input-field">
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium">Contact *</label>
+          <input
+            type="text"
+            required
+            value={contact}
+            onChange={(e) => setContact(e.target.value)}
+            className="input-field"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium">Email</label>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="input-field" />
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium">Address</label>
+          <textarea
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            className="input-field min-h-[80px]"
+            rows={3}
+          />
+        </div>
+        <div className="flex gap-3">
+          <button type="submit" disabled={createMutation.isPending} className="btn-primary">
+            {createMutation.isPending ? "Saving..." : "Save Patient"}
+          </button>
+          <Link href="/dashboard/patients" className="btn-secondary">
+            Cancel
+          </Link>
+        </div>
+      </form>
+    </div>
+  );
+}
