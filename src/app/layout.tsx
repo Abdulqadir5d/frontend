@@ -5,6 +5,7 @@ import QueryProvider from "@/api/QueryProvider";
 import { AuthProvider } from "@/context/AuthContext";
 import { ClinicProvider } from "@/context/ClinicContext";
 import CommandPalette from "@/components/CommandPalette";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,7 @@ export default function RootLayout({
         <QueryProvider>
           <ClinicProvider>
             <AuthProvider>
+              <Toaster position="top-center" reverseOrder={false} />
               <CommandPalette />
               {children}
             </AuthProvider>

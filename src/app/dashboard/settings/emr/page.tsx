@@ -3,6 +3,7 @@
 import { useEMRTemplates, useCreateEMRTemplate } from "@/api/queries";
 import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
+import { toast } from "react-hot-toast";
 
 export default function EMRSettingsPage() {
     const { data: templates, isLoading } = useEMRTemplates();
@@ -16,11 +17,12 @@ export default function EMRSettingsPage() {
     const handleCreate = async () => {
         try {
             await createMutation.mutateAsync({ name, fields });
+            toast.success("Template created successfully!");
             setIsAdding(false);
             setName("");
             setFields([{ label: "", type: "text", required: false }]);
         } catch (err) {
-            alert("Failed to create template");
+            toast.error("Failed to create template");
         }
     };
 

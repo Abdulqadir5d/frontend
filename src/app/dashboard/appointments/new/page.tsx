@@ -7,6 +7,7 @@ import { appointmentApi, patientApi, doctorApi } from "@/api/clinic";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const TIME_SLOTS = ["09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00"];
 
@@ -41,10 +42,15 @@ export default function NewAppointmentPage() {
 
   const createMutation = useMutation({
     mutationFn: appointmentApi.create,
-    onSuccess: () => router.push("/dashboard/appointments"),
+    onSuccess: () => {
+      toast.success("Appointment booked successfully!");
+      router.push("/dashboard/appointments");
+    },
     onError: (err) => {
       if (axios.isAxiosError(err)) {
-        alert(err.response?.data?.message || "Failed to book");
+        toast.error(err.response?.data?.message || "Failed to book");
+      } else {
+        toast.error("An unexpected error occurred");
       }
     },
   });
@@ -56,19 +62,19 @@ export default function NewAppointmentPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!doctorId) {
-      alert("Please select a doctor");
+      toast.error("Please select a doctor");
       return;
     }
     if (!date) {
-      alert("Please select a date");
+      toast.error("Please select a date");
       return;
     }
     if (!timeSlot) {
-      alert("Please select a time slot");
+      toast.error("Please select a time slot");
       return;
     }
     if (!isPatient && !patientId) {
-      alert("Please select a patient");
+      toast.error("Please select a patient");
       return;
     }
 

@@ -6,6 +6,7 @@ import { useClinic } from "@/context/ClinicContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -13,21 +14,20 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
     try {
       await login(email, password);
+      toast.success("Welcome back!");
       router.push("/dashboard");
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || "Login failed");
+        toast.error(err.response?.data?.message || "Login failed");
       } else {
-        setError("Login failed");
+        toast.error("Login failed");
       }
     } finally {
       setLoading(false);
@@ -49,11 +49,6 @@ export default function LoginPage() {
             {clinic?.name ? `Login to ${clinic.name}` : "Login"}
           </h1>
         </div>
-        {error && (
-          <p className="rounded bg-red-100 p-3 text-center text-red-700 dark:bg-red-900/30 dark:text-red-400">
-            {error}
-          </p>
-        )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="email" className="mb-1 block text-sm font-medium">

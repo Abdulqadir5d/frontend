@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { useState } from "react";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 export default function AppointmentDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -24,11 +25,14 @@ export default function AppointmentDetailPage() {
     mutationFn: (data: { status: Appointment["status"] }) => appointmentApi.update(id!, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["appointment", id] });
+      toast.success("Appointment updated successfully!");
       setStatus("");
     },
     onError: (err) => {
       if (axios.isAxiosError(err)) {
-        alert(err.response?.data?.message || "Failed to update");
+        toast.error(err.response?.data?.message || "Failed to update");
+      } else {
+        toast.error("An unexpected error occurred");
       }
     },
   });

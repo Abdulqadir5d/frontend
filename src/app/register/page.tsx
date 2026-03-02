@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
 import { useClinic } from "@/context/ClinicContext";
+import { toast } from "react-hot-toast";
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -25,15 +26,13 @@ export default function RegisterPage() {
   const [clinicName, setClinicName] = useState("");
   const [subdomain, setSubdomain] = useState("");
 
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
 
@@ -47,6 +46,7 @@ export default function RegisterPage() {
           adminEmail: email,
           password,
         });
+        toast.success("Clinic registered successfully!");
       } else {
         await register({
           name,
@@ -55,13 +55,14 @@ export default function RegisterPage() {
           role,
           clinicId: clinic?._id
         });
+        toast.success("Account created successfully!");
       }
       router.push("/dashboard");
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || "Registration failed");
+        toast.error(err.response?.data?.message || "Registration failed");
       } else {
-        setError("Registration failed");
+        toast.error("Registration failed");
       }
     } finally {
       setLoading(false);
@@ -88,11 +89,6 @@ export default function RegisterPage() {
             </button>
           </div>
         </div>
-        {error && (
-          <p className="rounded-lg bg-red-50 p-3 text-center text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400">
-            {error}
-          </p>
-        )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="name" className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">

@@ -7,6 +7,7 @@ import { prescriptionApi, patientApi, doctorApi } from "@/api/clinic";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 export default function NewPrescriptionPage() {
   const router = useRouter();
@@ -36,10 +37,15 @@ export default function NewPrescriptionPage() {
 
   const createMutation = useMutation({
     mutationFn: prescriptionApi.create,
-    onSuccess: () => router.push("/dashboard/prescriptions"),
+    onSuccess: () => {
+      toast.success("Prescription created successfully!");
+      router.push("/dashboard/prescriptions");
+    },
     onError: (err) => {
       if (axios.isAxiosError(err)) {
-        alert(err.response?.data?.message || "Failed");
+        toast.error(err.response?.data?.message || "Failed to create prescription");
+      } else {
+        toast.error("An unexpected error occurred");
       }
     },
   });
@@ -60,16 +66,16 @@ export default function NewPrescriptionPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!patientId) {
-      alert("Please select a patient");
+      toast.error("Please select a patient");
       return;
     }
     const meds = medicines.filter((m) => m.name.trim() && m.dosage.trim());
     if (meds.length === 0) {
-      alert("At least one medicine with name and dosage is required");
+      toast.error("At least one medicine with name and dosage is required");
       return;
     }
     if (!doctorId) {
-      alert("Doctor information is missing. Please re-login.");
+      toast.error("Doctor information is missing. Please re-login.");
       return;
     }
 
