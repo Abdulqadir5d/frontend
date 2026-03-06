@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { useRegisterClinic } from "@/api/queries";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
@@ -11,56 +10,44 @@ import { toast } from "react-hot-toast";
 
 export default function RegisterPage() {
   const { register } = useAuth();
-  const registerClinic = useRegisterClinic();
   const { clinic } = useClinic();
   const router = useRouter();
 
-  const [mode, setMode] = useState<"user" | "clinic">("user");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState<"patient" | "doctor" | "receptionist">("patient");
-
-  // Clinic Fields
-  const [clinicName, setClinicName] = useState("");
-  const [subdomain, setSubdomain] = useState("");
-
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
+      toast.error("Access codes do not match");
       return;
     }
 
     setLoading(true);
     try {
-      if (mode === "clinic") {
-        await registerClinic.mutateAsync({
-          clinicName,
-          subdomain,
-          adminName: name,
-          adminEmail: email,
-          password,
-        });
-        toast.success("Clinic registered successfully!");
+      await register({
+        name,
+        email,
+        password,
+        role,
+        clinicId: clinic?._id
+      });
+
+      if (role === "patient") {
+        toast.success("Clinical membership enrolled");
+        router.push("/dashboard");
       } else {
-        await register({
-          name,
-          email,
-          password,
-          role,
-          clinicId: clinic?._id
-        });
-        toast.success("Account created successfully!");
+        toast.success("Registration received. Pending clinical verification.", { duration: 6000 });
+        router.push("/login");
       }
-      router.push("/dashboard");
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message || "Registration failed");
+        toast.error(err.response?.data?.message || "Enrollment failed");
       } else {
         toast.error("Registration failed");
       }
@@ -70,148 +57,136 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4 dark:bg-slate-900">
-      <div className="w-full max-w-md space-y-6 rounded-xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+    <div className="flex min-h-screen items-center justify-center p-6 bg-slate-50/30 selection:bg-emerald-100">
+      <div className="w-full max-w-lg space-y-10">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-teal-600 dark:text-teal-400">AI Clinic</h1>
-          <div className="mt-4 flex rounded-lg bg-slate-100 p-1 dark:bg-slate-900">
-            <button
-              onClick={() => setMode("user")}
-              className={`flex-1 rounded-md py-1.5 text-xs font-medium transition-all ${mode === "user" ? "bg-white shadow-sm dark:bg-slate-800" : "text-slate-500 hover:text-slate-700"}`}
-            >
-              User Account
-            </button>
-            <button
-              onClick={() => setMode("clinic")}
-              className={`flex-1 rounded-md py-1.5 text-xs font-medium transition-all ${mode === "clinic" ? "bg-white shadow-sm dark:bg-slate-800" : "text-slate-500 hover:text-slate-700"}`}
-            >
-              Clinic Signup
-            </button>
-          </div>
+          <Link href="/" className="inline-flex h-16 w-16 mb-6 rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-700 items-center justify-center text-white shadow-2xl shadow-emerald-600/30 hover:scale-105 transition-all duration-500 border border-emerald-400/20">
+            <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </Link>
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Clinical Staff Enrollment</h1>
+          <p className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em] mt-2">Initialize your specialized role profile</p>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="name" className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Full Name
-            </label>
-            <input
-              id="name"
-              type="text"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="input-field"
-              placeholder="John Doe"
-            />
-          </div>
 
-
-          {mode === "clinic" ? (
-            <>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Clinic Name</label>
+        <div className="card-premium p-10 shadow-2xl shadow-gray-200/50">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label htmlFor="name" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                  Full Name
+                </label>
                 <input
+                  id="name"
                   type="text"
                   required
-                  value={clinicName}
-                  onChange={(e) => setClinicName(e.target.value)}
-                  className="input-field"
-                  placeholder="City Health Clinic"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="input-field py-3.5 font-medium"
+                  placeholder="John Doe"
                 />
               </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Subdomain</label>
-                <div className="flex">
-                  <input
-                    type="text"
-                    required
-                    value={subdomain}
-                    onChange={(e) => setSubdomain(e.target.value.toLowerCase().replace(/\s+/g, ""))}
-                    className="input-field rounded-r-none"
-                    placeholder="city-health"
-                  />
-                  <span className="flex items-center rounded-r-lg border border-l-0 border-slate-300 bg-slate-50 px-3 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-950">
-                    .aiclinic.com
-                  </span>
-                </div>
+              <div className="space-y-2">
+                <label htmlFor="role" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                  Clinical Role
+                </label>
+                <select
+                  id="role"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value as typeof role)}
+                  className="input-field py-3.5 font-bold bg-gray-50/50"
+                >
+                  <option value="patient">Patient Client</option>
+                  <option value="doctor">Medical Doctor</option>
+                  <option value="nurse">Nurse</option>
+                  <option value="receptionist">Receptionist</option>
+                  <option value="lab_technician">Lab Technician</option>
+                  <option value="pharmacist">Pharmacist</option>
+                </select>
               </div>
-            </>
-          ) : (
-            <div>
-              <label htmlFor="role" className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                Role
-              </label>
-              <select
-                id="role"
-                value={role}
-                onChange={(e) => setRole(e.target.value as typeof role)}
-                className="input-field"
-              >
-                <option value="patient">Patient</option>
-                <option value="doctor">Doctor</option>
-                <option value="receptionist">Receptionist</option>
-              </select>
             </div>
-          )}
 
-          <div>
-            <label htmlFor="email" className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="input-field"
-              placeholder={mode === "clinic" ? "Admin Email" : "you@example.com"}
-            />
+            {role !== "patient" && (
+              <div className="p-4 rounded-xl bg-amber-50 border border-amber-100 flex items-start gap-3 animate-pulse-slow">
+                <svg className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <p className="text-[10px] font-bold text-amber-800 leading-relaxed uppercase tracking-widest">
+                  Important: {role} accounts require manual clinical verification by an administrator before access is granted.
+                </p>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                Professional Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="input-field py-3.5 font-medium"
+                placeholder="you@example.com"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label htmlFor="password" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                  Access Code
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  required
+                  minLength={6}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="input-field py-3.5 font-medium"
+                  placeholder="Min 6 chars"
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="confirmPassword" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                  Confirm Access
+                </label>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  required
+                  minLength={6}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="input-field py-3.5 font-medium"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary w-full py-4 text-xs shadow-xl shadow-emerald-600/20 mt-6"
+            >
+              {loading ? "Processing Enrollment..." : "Finalize Profile Creation"}
+            </button>
+          </form>
+
+          <div className="mt-10 pt-8 border-t border-gray-50 text-center">
+            <p className="text-sm text-gray-400 font-medium">
+              Already possess clinical access?{" "}
+              <Link href="/login" className="font-bold text-emerald-600 hover:underline">
+                Secure Login
+              </Link>
+            </p>
           </div>
-          <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              required
-              minLength={6}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="input-field"
-              placeholder="Min 6 characters"
-            />
-          </div>
-          <div>
-            <label htmlFor="confirmPassword" className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Confirm Password
-            </label>
-            <input
-              id="confirmPassword"
-              type="password"
-              required
-              minLength={6}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="input-field"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-teal-600 px-4 py-2 font-medium text-white hover:bg-teal-700 disabled:opacity-50"
-          >
-            {loading ? "Creating account..." : "Register"}
-          </button>
-        </form>
-        <p className="text-center text-sm text-slate-600 dark:text-slate-400">
-          Already have an account?{" "}
-          <Link href="/login" className="font-medium text-teal-600 hover:underline dark:text-teal-400">
-            Login
-          </Link>
-        </p>
-      </div >
-    </div >
+        </div>
+
+        <div className="text-center opacity-30">
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em]">Institutional Data Protection Active</p>
+        </div>
+      </div>
+    </div>
   );
 }

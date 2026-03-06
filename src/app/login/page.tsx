@@ -21,13 +21,13 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(email, password);
-      toast.success("Welcome back!");
+      toast.success("Clinical access granted");
       router.push("/dashboard");
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message || "Login failed");
+        toast.error(err.response?.data?.message || "Authentication failed");
       } else {
-        toast.error("Login failed");
+        toast.error("Access denied");
       }
     } finally {
       setLoading(false);
@@ -35,61 +35,77 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
-        <div className="flex flex-col items-center gap-4">
-          {clinic?.settings.logoUrl ? (
-            <img src={clinic.settings.logoUrl} alt={clinic.name} className="h-16 w-auto" />
-          ) : (
-            <div className="h-16 w-16 rounded-full bg-blue-600 flex items-center justify-center text-white text-2xl font-bold">
-              {clinic?.name?.[0] || "AI"}
+    <div className="flex min-h-screen items-center justify-center p-6 bg-slate-50/30 selection:bg-emerald-100">
+      <div className="w-full max-w-md space-y-10">
+        <div className="flex flex-col items-center gap-6">
+          <Link href="/" className="flex flex-col items-center gap-4 group">
+            <div className="h-20 w-20 rounded-[2rem] bg-emerald-600 flex items-center justify-center text-white text-3xl font-black shadow-2xl shadow-emerald-600/30 group-hover:scale-105 transition-transform">
+              {clinic?.name?.[0] || "H"}
             </div>
-          )}
-          <h1 className="text-center text-3xl font-bold">
-            {clinic?.name ? `Login to ${clinic.name}` : "Login"}
-          </h1>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="mb-1 block text-sm font-medium">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-medium">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
-        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-          Don&apos;t have an account?{" "}
-          <Link href="/register" className="text-blue-600 hover:underline">
-            Register
+            <div className="text-center">
+              <h1 className="text-3xl font-black text-gray-900 tracking-tight">
+                {clinic?.name ? clinic.name : "HealthAI Portal"}
+              </h1>
+              <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mt-1">Authorized Personnel Only</p>
+            </div>
           </Link>
-        </p>
+        </div>
+
+        <div className="card-premium p-10 shadow-2xl shadow-gray-200/50">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="clinician@healthai.com"
+                className="input-field py-3.5 font-medium focus:ring-emerald-500/10"
+              />
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center px-1">
+                <label htmlFor="password" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                  Password
+                </label>
+                <Link href="#" className="text-[10px] font-bold text-emerald-600 hover:underline uppercase tracking-widest">Forgot?</Link>
+              </div>
+              <input
+                id="password"
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="input-field py-3.5 font-medium focus:ring-emerald-500/10"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary w-full py-4 text-xs shadow-xl shadow-emerald-600/20 mt-4"
+            >
+              {loading ? "Verifying Credentials..." : "Grant Secure Access"}
+            </button>
+          </form>
+
+          <div className="mt-10 pt-8 border-t border-gray-50 text-center">
+            <p className="text-sm text-gray-400 font-medium">
+              New institution or staff?{" "}
+              <Link href="/register" className="font-bold text-emerald-600 hover:underline">
+                Create Registry
+              </Link>
+            </p>
+          </div>
+        </div>
+
+        <div className="text-center opacity-30">
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em]">Encrypted Clinical Environment</p>
+        </div>
       </div>
     </div>
   );

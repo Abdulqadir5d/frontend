@@ -4,7 +4,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: "admin" | "doctor" | "receptionist" | "patient";
+  role: "admin" | "doctor" | "receptionist" | "patient" | "nurse" | "pharmacist" | "lab_technician";
   subscriptionPlan: "free" | "pro";
   patientId?: string;
   specialization?: string;
