@@ -213,7 +213,7 @@ export default function AIPage() {
               </div>
               <h3 className="text-base font-bold text-emerald-900 uppercase tracking-tight mb-2">Advanced Engine Ready</h3>
               <p className="text-xs text-emerald-700 font-medium leading-relaxed">
-                The HealthAI clinical modeling interface is active. Select insights on the right to begin data synthesis and predictive audit.
+                The ShifaAI clinical modeling interface is active. Select insights on the right to begin data synthesis and predictive audit.
               </p>
             </div>
           )}

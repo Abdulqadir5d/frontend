@@ -63,7 +63,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="clinician@healthai.com"
+                placeholder="clinician@shifaai.com"
                 className="input-field py-3.5 font-medium focus:ring-emerald-500/10"
               />
             </div>

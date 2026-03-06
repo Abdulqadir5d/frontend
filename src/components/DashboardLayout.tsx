@@ -242,7 +242,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               />
             </div>
             {/* Mobile Title */}
-            <h2 className="md:hidden text-lg font-black tracking-tight text-gray-900">Health<span className="text-emerald-600">AI</span></h2>
+            <h2 className="md:hidden text-lg font-black tracking-tight text-gray-900">Shifa<span className="text-emerald-600">AI</span></h2>
           </div>
 
           <div className="flex items-center gap-2 md:gap-5 relative">
@@ -302,7 +302,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               onClick={() => {
                 setIsAssistantOpen(true);
                 if (aiChat.length === 0) {
-                  setAiChat([{ role: "ai", content: `Welcome, ${user.name}. I am the HealthAI Core. How can I assist with clinical procedures today?` }]);
+                  setAiChat([{ role: "ai", content: `Welcome, ${user.name}. I am the ShifaAI Core. How can I assist with clinical procedures today?` }]);
                 }
               }}
               className="btn-primary group h-11 px-6 shadow-xl shadow-emerald-600/10 border-0"
@@ -340,7 +340,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold tracking-tight uppercase">HealthAI</h3>
+                    <h3 className="text-xl font-bold tracking-tight uppercase">ShifaAI</h3>
                     <p className="text-[10px] font-black text-emerald-100 uppercase tracking-widest">Medical Intelligence Core</p>
                   </div>
                 </div>
