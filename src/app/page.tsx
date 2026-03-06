@@ -45,7 +45,7 @@ export default function HomePage() {
         <div className={`fixed inset-0 z-[100] bg-white transition-transform duration-500 md:hidden ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}>
           <div className="p-8 h-full flex flex-col">
             <div className="flex items-center justify-between mb-12">
-              <span className="text-xl font-black text-gray-900">HealthAI</span>
+              <span className="text-xl font-black text-gray-900">ShifaAI</span>
               <button onClick={() => setIsMobileMenuOpen(false)} className="text-gray-900 p-2">
                 <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

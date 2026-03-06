@@ -168,15 +168,15 @@ export default function NewUserPage() {
               <ul className="space-y-4">
                 <li className="flex gap-3 text-[11px] leading-relaxed opacity-80">
                   <span className="h-5 w-5 rounded-full bg-emerald-800 flex items-center justify-center shrink-0">1</span>
-                  Ensure staff emails are clinic-verified for internal communications.
+                  <span className="text-emerald-800">Ensure staff emails are clinic-verified for internal communications.</span>
                 </li>
                 <li className="flex gap-3 text-[11px] leading-relaxed opacity-80">
                   <span className="h-5 w-5 rounded-full bg-emerald-800 flex items-center justify-center shrink-0">2</span>
-                  Roles determine system-wide access permissions and patient record visibility.
-                </li>
+                  <span className="text-emerald-800"> Roles determine system-wide access permissions and patient record visibility.
+                  </span></li>
                 <li className="flex gap-3 text-[11px] leading-relaxed opacity-80">
                   <span className="h-5 w-5 rounded-full bg-emerald-800 flex items-center justify-center shrink-0">3</span>
-                  Doctors require a specialization entry for proper appointment routing.
+                  <span className="text-emerald-800"> Doctors require a specialization entry for proper appointment routing.</span>
                 </li>
               </ul>
             </div>

@@ -44,7 +44,7 @@ export default function LoginPage() {
             </div>
             <div className="text-center">
               <h1 className="text-3xl font-black text-gray-900 tracking-tight">
-                {clinic?.name ? clinic.name : "HealthAI Portal"}
+                {clinic?.name ? clinic.name : "ShifaAI Portal"}
               </h1>
               <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mt-1">Authorized Personnel Only</p>
             </div>
