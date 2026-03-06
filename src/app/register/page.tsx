@@ -17,7 +17,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState<"patient" | "doctor" | "receptionist">("patient");
+  const [role, setRole] = useState<"patient" | "doctor" | "receptionist" | "nurse" | "lab_technician" | "pharmacist">("patient");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
