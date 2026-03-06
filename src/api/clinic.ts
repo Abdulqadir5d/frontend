@@ -28,7 +28,7 @@ export const patientApi = {
 export interface Appointment {
   _id: string;
   patientId: Patient | string;
-  doctorId: { name: string; email: string; specialization?: string } | string;
+  doctorId: { _id: string; name: string; email: string; specialization?: string } | string;
   date: string;
   timeSlot: string;
   status: "pending" | "confirmed" | "completed" | "cancelled";
@@ -58,7 +58,7 @@ export interface Medicine {
 export interface Prescription {
   _id: string;
   patientId: Patient | string;
-  doctorId: { name: string; email: string; specialization?: string } | string;
+  doctorId: { _id: string; name: string; email: string; specialization?: string } | string;
   appointmentId?: string;
   diagnosis?: string;
   medicines: Medicine[];
@@ -103,7 +103,7 @@ export const userApi = {
 };
 
 export const doctorApi = {
-  list: () => api.get<{ doctors: { id: string; name: string; email: string; specialization?: string }[] }>("/doctors").then((r) => r.data),
+  list: () => api.get<{ doctors: { _id: string; name: string; email: string; specialization?: string }[] }>("/doctors").then((r) => r.data),
 };
 
 // Analytics
@@ -228,8 +228,8 @@ export const vitalsApi = {
 // Labs
 export interface LabReport {
   _id: string;
-  patientId: { name: string; email: string } | string;
-  doctorId: { name: string; specialization?: string } | string;
+  patientId: { _id: string; name: string; email: string } | string;
+  doctorId: { _id: string; name: string; email: string; specialization?: string } | string;
   testName: string;
   description?: string;
   results?: string;
@@ -271,4 +271,3 @@ export const notificationApi = {
   markAsRead: (id: string) => api.patch<Notification>(`/notifications/${id}/read`).then((r) => r.data),
   markAllAsRead: () => api.patch("/notifications/read-all").then((r) => r.data),
 };
-

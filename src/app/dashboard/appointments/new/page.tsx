@@ -41,7 +41,7 @@ export default function NewAppointmentPage() {
 
   useEffect(() => {
     if (doctorsData?.doctors && isPatient === false && user?.role === "doctor" && !doctorId) {
-      const exists = doctorsData.doctors.find(d => d.id === user.id);
+      const exists = doctorsData.doctors.find(d => d._id === user.id);
       if (exists) setDoctorId(user.id);
     }
   }, [doctorsData, isPatient, user, doctorId]);
@@ -153,7 +153,7 @@ export default function NewAppointmentPage() {
               >
                 <option value="">{doctorsLoading ? "Accessing Staff Records..." : "Select Doctor"}</option>
                 {doctors.map((d) => (
-                  <option key={d.id} value={d.id}>Dr. {d.name}</option>
+                  <option key={d._id} value={d._id}>Dr. {d.name}</option>
                 ))}
               </select>
             </div>

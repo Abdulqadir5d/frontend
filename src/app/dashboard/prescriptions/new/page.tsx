@@ -156,7 +156,7 @@ export default function NewPrescriptionPage() {
                 >
                   <option value="">{doctorsLoading ? "Loading Medical Staff..." : "Authorize Clinician..."}</option>
                   {(doctorsData?.doctors || []).map((d) => (
-                    <option key={d.id} value={d.id}>{d.name}</option>
+                    <option key={d._id} value={d._id}>{d.name}</option>
                   ))}
                 </select>
               </div>
